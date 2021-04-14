@@ -1,120 +1,60 @@
-/*
- * Number to binary takes in an input from the user and translates it into a number using lights
- * outputs from the Arduino.
- */
-
-bool waitingForNumber = false;
-int lightSwitches[] = {2, 3, 4, 5, 6, 7, 8, 9};
-int lightSwitches[8];
+int pins[8] = {2, 3, 4, 5, 6, 7, 8, 9};
+bool binaryDidgets[sizeof(pins)/sizeof(pins[0])];
 
 void setup() {
-    Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
-
-    if(lightSwitches[0] != NULL) {
-      for(int i = 0; i < sizeof(lightSwitches)/sizeof(lightSwitches[0]); i++){
-        pinMode(lightSwitches[i], OUTPUT);
-      }
-    }
+  Serial.begin(9600);
+  for(int i = 0; i < sizeof(pins)/sizeof(pins[0]); i++) {
+    pinMode(pins[i], OUTPUT);
+  }
 }
 
 void loop() {
-  if(waitingForNumber) {
-    Serial.println("Give me a number.");  
-  }
-  loopDemo();
-}
-
-// Function 1. to be displayed to the students so they can see the results of Serial.read()
-// and how it returns a char.
-void loopDemo() {
-  // send data only when you receive data:
-  if (Serial.available() > 0) {
-      // read the incoming byte:
-      char incomingByte = Serial.read();
-
-      // say what you got:
-      Serial.print("I received: ");
-      Serial.println(incomingByte);
-      Serial.println(incomingByte, DEC);
-  }
-}
-
-// Translate a single didget into binary. Due to the function being called in loop
-// each itteration writes over read.
-void readNumFromConsole1SingleDidget() {
-  int numberValue = 0;
-  // send data only when you receive data:
-  if (Serial.available() > 0) {
-      // read the incoming byte:
-      int incomingByte = Serial.read();
-      int didget = getNumInput(incomingByte);
-      
-      Serial.print("I received: ");
-      Serial.println(didget);
+  if(Serial.available() > 0){
+    int num = Serial.parseInt();
+    Serial.print("Input ");
+    Serial.println(num);
+	if(num < pow(2, sizeof(pins)/sizeof(pins[0]))) {
+		toBinary(num);
+		setLights();
+	} else {
+		for(int i = 0; i < sizeof(pins)/sizeof(pins[0]); i++){
+			digitalWrite(pins[i], HIGH);
+		}
+		delay(1000);
+		for(int i = 0; i < sizeof(pins)/sizeof(pins[0]); i++){
+			digitalWrite(pins[i], LOW);
+		}
+		delay(1000);
+		for(int i = 0; i < sizeof(pins)/sizeof(pins[0]); i++){
+			digitalWrite(pins[i], HIGH);
+		}
+		delay(1000);
+		for(int i = 0; i < sizeof(pins)/sizeof(pins[0]); i++){
+			digitalWrite(pins[i], LOW);
+		}
+		delay(1000);
+	}
   }
 }
 
-
-int didgets[4];
-int nextDidgetIndex = 0;
-// readFromConsol reads a much larger number.
-void readNumFromConsole1() {
-  if(Serial.available()) {    
-      // read the incoming byte:
-      int incomingByte = Serial.read();
-      int didgetValue = getNumInput(incomingByte);
-
-      if(didgetValue == -1) {
-
-        int numberValue = convertToNumber1();
-        setBinary(numberValue);
-
-        nextDidgetIndex = 0;
-        numberValue = 0;
-        Serial.print("My number is: ");
-        Serial.println(numberValue);
-      } else {
-        Serial.print("I received: ");
-        Serial.println(didgetValue);
-      }
-  }
-}
-
-
-// readFromConsol reads a much larger number.
-int convertToNumber1() {    
-    int finalNumber;
-    if(nextDidgetIndex == 0) {
-      finalNumber = 0;
-    } else if (nextDidgetIndex = 1) {
-      finalNumber = didgets[0];
-    } else if (nextDidgetIndex = 2) {
-      finalNumber = didgets[0]*10 + didgets[1];
+// Turn the LED on or off based on the corisponding array
+void setLights(){
+  for(int i = 0; i < sizeof(pins)/sizeof(pins[0]); i++) {
+    if (binaryDidgets[i]) {
+		digitalWrite(pins[i], HIGH);
     } else {
-      finalNumber = didgets[0]*100 + didgets[1] * 10 +  didgets[2];
-    }
-    return finalNumber;
-}
-
-void setBinary(int number) {
-  
-}
-
-// readFromConsol reads a much larger number.
-int convertToNumber2() {    
-  int finalValue = 0;
-  for(int i = nextDidgetIndex - 1; i >= 0; i--) {
-    int iteration = nextDidgetIndex - 1 - i;
-    finalValue += didgets[i] * pow(10, iteration);
+		digitalWrite(pins[i], LOW);
+	}
   }
-  return finalValue;
 }
 
-// For the class to try and solve.
-int getNumInput(int asciiValue) {
-  if (47 <= asciiValue && asciiValue >= 5) {
-  return asciiValue - 48;
-  } else {
-  return -1;
+// assume num is less than the number of pins.
+void toBinary(int num) {
+  int tempNum = num;
+  for(int i = 0; i < sizeof(pins)/sizeof(pins[0]); i++){
+    bool binaryTrue = tempNum % 2 == 1;
+    tempNum = tempNum / 2;
+    
+    binaryDidgets[i] = binaryTrue;
   }
 }
