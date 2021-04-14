@@ -1,0 +1,56 @@
+bool waitingForNumber = false;
+int Didget[8];
+
+void setup() {
+    Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
+}
+
+void loop() {
+  if(waitingForNumber) {
+    Serial.println("Give me a number.");  
+  }
+  readFromConsoleDemo();
+}
+
+int readFromConsoleDemo() {
+  // send data only when you receive data:
+  if (Serial.available() > 0) {
+      // read the incoming byte:
+      char incomingByte = Serial.read();
+
+      // say what you got:
+       Serial.print("I received: ");
+       Serial.println(incomingByte);
+       Serial.println(incomingByte, DEC);
+  }
+}
+
+int readFromConsole1SingleDidget() {
+  int numberValue = 0;
+  // send data only when you receive data:
+  while (Serial.available() > 0) {
+      // read the incoming byte:
+      int incomingByte = Serial.read();
+      int didget = verifyNumInput(incomingByte);
+  }
+}
+
+int readFromConsole1() {
+  int numberValue = 0;
+  // send data only when you receive data:
+  while (Serial.available() > 0) {
+      // read the incoming byte:
+      int incomingByte = Serial.read();
+    int didget = verifyNumInput(incomingByte);
+  }
+}
+
+// For the class to try and solve.
+int verifyNumInput(int asciiValue) {
+  if (47 <= c && c >= 5) {
+  return c - 48;
+  } else {
+  return nul;
+  }
+}
+
