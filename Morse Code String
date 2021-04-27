@@ -4,6 +4,7 @@ int units = 250;
 int dash = 5;
 int dot = 1;
 int LED = 3;
+int pause = 1000;
 
 void setup() {
   Serial.begin(9600);
@@ -11,16 +12,16 @@ void setup() {
 }
 
 void loop() {
-  char sos[] = "sos";
+  String sos = "sos";
   decifer(sos);
   Serial.println();
 }
 
-void decifer(char *str){
+void decifer(String str){
   Serial.print(str);
   Serial.print(" ");
   
-  for(int i = 0; i < sizeof(str)/sizeof(str[0]); i ++){ 
+  for(int i = 0; i < str.length(); i ++){ 
     Serial.print(str[i]);
     if(str[i] == 's'){
       readLetter(s);
@@ -30,8 +31,8 @@ void decifer(char *str){
   }
 }
 
-void readLetter(char *str) {
-  for(int i = 0; i < sizeof(str)/sizeof(str[0]); i++) {
+void readLetter(String str) {
+  for(int i = 0; i < str.length(); i++) {
     if(str[i] =='.') {
       flash(dot * units, LED);
     } else {
@@ -44,5 +45,5 @@ void flash(int duration, int ledNum){
   digitalWrite(ledNum, HIGH);
   delay(duration);
   digitalWrite(ledNum, LOW);
-  delay(duration);
+  delay(pause);
 }
