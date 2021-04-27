@@ -1,0 +1,48 @@
+char s[] = "...";
+char o[] = "---";
+int units = 250;
+int dash = 5;
+int dot = 1;
+int LED = 3;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(LED, OUTPUT);
+}
+
+void loop() {
+  char sos[] = "sos";
+  decifer(sos);
+  Serial.println();
+}
+
+void decifer(char *str){
+  Serial.print(str);
+  Serial.print(" ");
+  
+  for(int i = 0; i < sizeof(str)/sizeof(str[0]); i ++){ 
+    Serial.print(str[i]);
+    if(str[i] == 's'){
+      readLetter(s);
+    } else if(str[i] == 'o'){
+      readLetter(o);
+    }
+  }
+}
+
+void readLetter(char *str) {
+  for(int i = 0; i < sizeof(str)/sizeof(str[0]); i++) {
+    if(str[i] =='.') {
+      flash(dot * units, LED);
+    } else {
+      flash(dash * units, LED);
+    }
+  }
+}
+
+void flash(int duration, int ledNum){
+  digitalWrite(ledNum, HIGH);
+  delay(duration);
+  digitalWrite(ledNum, LOW);
+  delay(duration);
+}
