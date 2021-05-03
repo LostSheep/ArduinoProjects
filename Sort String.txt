@@ -1,0 +1,47 @@
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  if(Serial.available() > 0) {
+    String str = Serial.readString();
+    Serial.println(str);
+    
+    String sortedStr = sortString(str);
+    Serial.println(sortedStr);
+    
+    printLetterCount(str);
+  }
+}
+
+String sortString(String str){
+  String sortedStr = str;
+  for(int i = 1; i < str.length(); i++) {
+    for(int j = i - 1; j >= 0 && sortedStr[j] > sortedStr[j + 1]; j--) {
+      char tempChar = sortedStr[j];
+      sortedStr[j] = sortedStr[j + 1];
+      sortedStr[j + 1] = tempChar;
+    }
+  }
+  return sortedStr;
+}
+
+void printLetterCount(String str) {
+  int letters[57] = {};  
+  for(int i = 0; i < str.length(); i++) {
+    int index = str[i] - 65;
+    if(index >= 0 && index < 57) {
+      letters[index] = letters[index] + 1;
+    }
+  }
+  
+  for(int i = 0; i < 57; i++) {
+    if(letters[i] > 0) {
+      char myLetter = i + 65;
+      Serial.print("There are : ");
+      Serial.print(letters[i]);
+      Serial.print(" of the letter ");
+      Serial.println(myLetter);
+    }
+  }
+}
