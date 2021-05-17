@@ -8,9 +8,11 @@ void loop() {
     //char myChar = Serial.read();
     //int accii = myChar;
     
+	
     Serial.println(myStr);
     String sortedStr = sorter(myStr);
 	Serial.println(sortedStr);
+	displayLetterCount(sortedStr);
   }
 }
 
@@ -24,5 +26,21 @@ String sorter(String str){
 	}
   }  
   return SortedStr;
-}
 
+}
+void displayLetterCount(String str) {
+	int letters[57] = {};
+	for(int i = 0; i < str.length(); i++) {
+		int index = str[i] - 65;
+		letters[index] = letters[index] + 1;
+	}
+	for(int i = 0; i < 57; i++) {
+		if(letters[i] > 0) {
+			letters[i] = letters[i] + 1;	
+			char myLetter = i + 65;
+			Serial.print(myLetter);
+			Serial.println(letters[index]);
+		}
+	}
+	
+}
