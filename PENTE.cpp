@@ -17,6 +17,8 @@ having 5 active pieces in a row (diagnally, horizontally or vertically)
 #include <iostream>
 #include <string>
 
+using namespace std;
+
 int boardWidth = 20;
 int boardHeight = 20;
 enum Piece {
@@ -41,6 +43,23 @@ void placePiece(Piece p, int x, int y) {
     board[x][y] = p;
 }
 
+// this function converts letter number coordinates to x,y.
+void makeMove(string letter, int number){
+    int x;
+    int y = number;
+    int asciiVal = letter[0];
+    if(asciiVal > 96) {
+        x = asciiVal - 97;
+    } else {
+        x = asciiVal - 65;
+    }
+    if(redPlayerTurn) {
+        placePiece(red, x, y);
+    } else {
+        placePiece(blue, x, y);
+    }
+}
+
 void printBoard() {
 	printf("   A B C D E F G H I J K L M N O P Q R S T\n");
     for(int i = 0; i < boardHeight; i++){
@@ -62,8 +81,11 @@ void printBoard() {
     }
 }
 
+// turnGenerator returns true if player1 is the red player.
 bool turnGenerator(){
-	
+	srand((unsigned int)time(NULL));
+	int random = rand() % 2;
+	return random == 1;
 }
 
 int main()
@@ -74,15 +96,50 @@ int main()
 	clearBoard();
     printBoard();
 	bool hasLoser = false;
-	while(!hasLoser){
-		printf("Hows it going diggity dogs.\n");
-		printf("Welcome to the PENTE.\n");
-		printf("Player 1 please enter your name.");
-		cin >> name1
-		printf("Player 2 please enter your name.");
-		cin >> name2
+	
+	printf("Hows it going diggity dogs.\n");
+	printf("Welcome to the PENTE.\n");
+	printf("Player 1 please enter your name.");
+	cin >> name1;
+	printf("Player 2 please enter your name.");
+	cin >> name2;
+
+    bool player1IsRed = turnGenerator();	
+	cout << "Hello " << name1 << ", you are red.\n";
+	cout << "Hello " << name2 << ", you are blue.\n";
+    string whosTurn;
+
+    string letterCoordinate;
+    int numberCoordinate;
+
+	while(!hasLoser) {
+	    if(redPlayerTurn) {
+	        whosTurn = "red";
+	    } else {
+	        whosTurn = "blue";
+	        
+	    }
+	    printBoard();
+	    cout << "player "<< whosTurn <<"enter your letter coordinate.";
+	    while (!(cin >> letterCoordinate) && 
+	    (letterCoordinate[0] >= 6 && letterCoordinate[0] <= 84) ||
+	    (letterCoordinate[0] >= 97 && letterCoordinate[0] <= 116))
+    	{
+    		cin.clear();
+    		cin.ignore(1000, '\n');
+    		cout << "Invalid input. Please enter a valid letter between A and T." << endl;
+    	}
+		cout << "player "<< whosTurn <<"enter your number coordinate.";
+		while (!(cin >> numberCoordinate) && numberCoordinate > 0 && numberCoordinate < 21)
+    	{
+    		cin.clear();
+    		cin.ignore(1000, '\n');
+    		cout << "Invalid input. Please enter a number between 1 and 20." << endl;
+    	}
 		
+		makeMove(letterCoordinate, numberCoordinate - 1);
 		
+		hasLoser = true;
 	}
 
     return 0;
