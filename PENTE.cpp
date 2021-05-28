@@ -3,7 +3,7 @@
 The board consists of a 20x20 grid
 It is a 2 player game (R && B)
 
-If a piece becomes surrounded by 2 opposing pieces on opposite sides
+If a 2 pieces becomes surrounded by 2 opposing pieces on opposite sides
 the piece is considered captured and is removed from the board.
 
 Oposing piece may only be caputured on their turn.
@@ -88,6 +88,157 @@ bool turnGenerator(){
 	return random == 1;
 }
 
+// A player has won if a there are 5 pices in a row or 5 captures have been made.
+bool hasWon(int x, int y) {
+	Piece redOrBlue;
+	if(redPlayerTurn) {
+		redOrBlue = red;
+	} else {
+		redOrBlue = blue;
+	}
+	return 
+		checkHorizontal(x, y, redOrBlue) ||
+		checkVertical(x, y, redOrBlue) ||
+		checkDiagLeft(x, y, redOrBlue) ||
+		checkDiagRight(x, y, redOrBlue) ||
+}
+
+bool checkHorizontal(int x, int y, Peice p){
+	int 5PieceCounter = 0;
+	int xStart = x - 4;
+	int yStart = y;
+	int loopLength = 10;
+	if(xStart < 0 || yStart < 0){
+		if(xStart < yStart){
+			loopLength = loopLength + yStart;
+		} else {
+			loopLength = loopLength + xStart;
+		}			
+	}
+	if(xStart < 0) {
+		xStart = 0;
+	}
+	if(yStart < 0) {
+		yStart = 0;
+	}
+	for(int i = 0; i < loopLength; i++) {
+		if(xStart + i > 19) {
+			break;
+		}
+		if(board[xStart + i][yStart] == p){
+			5PieceCounter++;
+			if(5PieceCounter == 5) {
+				return true;
+			}
+		} else {
+			5PieceCounter = 0;
+		}		
+	}
+	return false;
+}
+
+bool checkVertical(int x, int y, Peice p){
+	int 5PieceCounter = 0;
+	int xStart = x;
+	int yStart = y - 4;
+	int loopLength = 10;
+	if(xStart < 0 || yStart < 0){
+		if(xStart < yStart){
+			loopLength = loopLength + yStart;
+		} else {
+			loopLength = loopLength + xStart;
+		}
+	}
+	if(xStart < 0) {
+		xStart = 0;
+	}
+	if(yStart < 0) {
+		yStart = 0;
+	}
+	for(int i = 0; i < loopLength; i++) {
+		if(yStart + i > 19) {
+			break;
+		}
+		if(board[xStart][yStart + i] == p){
+			5PieceCounter++;
+			if(5PieceCounter == 5) {
+				return true;
+			}
+		} else {
+			5PieceCounter = 0;
+		}		
+	}
+	return false;
+}
+
+bool checkDiagLeft(int x, int y, Peice p){
+	int 5PieceCounter = 0;
+	int xStart = x - 4;
+	int yStart = y - 4;
+	int loopLength = 10;
+	if(xStart < 0 || yStart < 0){
+		if(xStart < yStart){
+			loopLength = loopLength + xStart;
+		} else {
+			loopLength = loopLength + yStart;
+		}			
+	}
+	if(xStart < 0) {
+		xStart = 0;
+	}
+	if(yStart < 0) {
+		yStart = 0;
+	}
+	for(int i = 0; i < loopLength; i++) {
+		if(xStart + i > 19 || yStart + i > 19) {
+			break;
+		}
+		if(board[xStart + i][yStart] == p){
+			5PieceCounter++;
+			if(5PieceCounter == 5) {
+				return true;
+			}
+		} else {
+			5PieceCounter = 0;
+		}		
+	}
+	return false;
+}
+
+bool checkDiagRight(int x, int y, Peice p){
+	int 5PieceCounter = 0;
+	int xStart = x - 4;
+	int yStart = y;
+	int loopLength = 10;
+	if(xStart < 0) {
+		xStart = 0;
+	}
+	if(yStart < 0) {
+		yStart = 0;
+	}
+	for(int i = 0; i < loopLength; i++) {
+		if(xStart < 0 || yStart < 0){
+			if(xStart < yStart){
+				loopLength = loopLength + yStart;
+			} else {
+				loopLength = loopLength + xStart;
+			}			
+		}
+		if(xStart + i > 19) {
+			break;
+		}
+		if(board[xStart + i][yStart] == p){
+			5PieceCounter++;
+			if(5PieceCounter == 5) {
+				return true;
+			}
+		} else {
+			5PieceCounter = 0;
+		}		
+	}
+	return false;
+}
+
 int main()
 {
 	string name1;
@@ -105,22 +256,27 @@ int main()
 	cin >> name2;
 
     bool player1IsRed = turnGenerator();	
-	cout << "Hello " << name1 << ", you are red.\n";
-	cout << "Hello " << name2 << ", you are blue.\n";
     string whosTurn;
 
+	if(player1IsRed) {
+		cout << "Hello " << name1 << ", you are red.\n";
+		cout << "Hello " << name2 << ", you are blue.\n";
+	} else {
+		cout << "Hello " << name2 << ", you are red.\n";
+		cout << "Hello " << name1 << ", you are blue.\n";
+	}
+
     string letterCoordinate;
-    int numberCoordinate;
+    int y;
 
 	while(!hasLoser) {
 	    if(redPlayerTurn) {
 	        whosTurn = "red";
 	    } else {
 	        whosTurn = "blue";
-	        
 	    }
 	    printBoard();
-	    cout << "player "<< whosTurn <<"enter your letter coordinate.";
+	    cout << "player "<< whosTurn <<" enter your letter coordinate.";
 	    while (!(cin >> letterCoordinate) && 
 	    (letterCoordinate[0] >= 6 && letterCoordinate[0] <= 84) ||
 	    (letterCoordinate[0] >= 97 && letterCoordinate[0] <= 116))
@@ -129,17 +285,23 @@ int main()
     		cin.ignore(1000, '\n');
     		cout << "Invalid input. Please enter a valid letter between A and T." << endl;
     	}
+	    int asciiVal = letterCoordinate[0];
+		int x;
+		if(asciiVal > 96) {
+			x = asciiVal - 97;
+		} else {
+			x = asciiVal - 65;
+		}
 		cout << "player "<< whosTurn <<"enter your number coordinate.";
-		while (!(cin >> numberCoordinate) && numberCoordinate > 0 && numberCoordinate < 21)
+		while (!(cin >> y) && y > 0 && y < 21)
     	{
     		cin.clear();
     		cin.ignore(1000, '\n');
     		cout << "Invalid input. Please enter a number between 1 and 20." << endl;
     	}
 		
-		makeMove(letterCoordinate, numberCoordinate - 1);
-		
-		hasLoser = true;
+		makeMove(letterCoordinate, y - 1);
+		if(hasWon(x, y))
 	}
 
     return 0;
