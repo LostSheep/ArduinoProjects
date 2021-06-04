@@ -44,15 +44,7 @@ void placePiece(Piece p, int x, int y) {
 }
 
 // this function converts letter number coordinates to x,y.
-void makeMove(string letter, int number){
-    int x;
-    int y = number;
-    int asciiVal = letter[0];
-    if(asciiVal > 96) {
-        x = asciiVal - 97;
-    } else {
-        x = asciiVal - 65;
-    }
+void makeMove(int x, int y) {  
     if(redPlayerTurn) {
         placePiece(red, x, y);
     } else {
@@ -69,9 +61,9 @@ void printBoard() {
 			printf(" %d ", i + 1);
 		}
         for(int j = 0; j < boardWidth; j++){
-			if(board[i][j] == red) {
+			if(board[j][i] == red) {
 				printf("%c ", 'R');	
-			} else if (board[i][j] == blue){
+			} else if (board[j][i] == blue){
 				printf("%c ", 'B');
 			} else {
 				printf("%c ", '+');	
@@ -88,6 +80,97 @@ bool turnGenerator(){
 	return random == 1;
 }
 
+
+bool checkHorizontal(int x, int y, Piece p){
+	int fivePieceCounter = 0;
+	int xStart = x - 4;
+	int yStart = y;
+	for(int i = 0; i < 10; i++) {
+		if(	xStart + i >= 0 && 
+			xStart + i <= 19 && 
+			yStart - i >= 0 && 
+			yStart - i <= 19) {
+			if(board[xStart + i][yStart] == p){
+				fivePieceCounter++;
+				if(fivePieceCounter == 5) {
+					return true;
+				}
+			} else {
+				fivePieceCounter = 0;
+			}		
+		}
+	}
+	return false;
+}
+
+bool checkVertical(int x, int y, Piece p){
+	int fivePieceCounter = 0;
+	int xStart = x;
+	int yStart = y - 4;
+
+	for(int i = 0; i < 10; i++) {
+		if(	xStart + i >= 0 && 
+			xStart + i <= 19 && 
+			yStart - i >= 0 && 
+			yStart - i <= 19) {
+			if(board[xStart][yStart + i] == p){
+				fivePieceCounter++;
+				if(fivePieceCounter == 5) {
+					return true;
+				}
+			} else {
+				fivePieceCounter = 0;
+			}		
+		}
+	}
+	return false;
+}
+
+bool checkDiagBotLeft(int x, int y, Piece p){
+	int fivePieceCounter = 0;
+	int xStart = x - 4;
+	int yStart = y - 4;
+	for(int i = 0; i < 10; i++) {
+		if(	xStart + i >= 0 && 
+			xStart + i <= 19 && 
+			yStart - i >= 0 && 
+			yStart - i <= 19) {
+			if(board[xStart + i][yStart + i] == p){
+				fivePieceCounter++;
+				if(fivePieceCounter == 5) {
+					return true;
+				}
+			} else {
+				fivePieceCounter = 0;
+			}		
+		}
+	}
+	return false;
+}
+
+bool checkDiagTopLeft(int x, int y, Piece p){
+	int fivePieceCounter = 0;
+	int xStart = x - 4;
+	int yStart = y + 4;
+	
+	for(int i = 0; i < 10; i++) {
+		if(	xStart + i >= 0 && 
+			xStart + i <= 19 && 
+			yStart - i >= 0 && 
+			yStart - i <= 19) {
+			if(board[xStart + i][yStart - i] == p){
+				fivePieceCounter++;
+				if(fivePieceCounter == 5) {
+					return true;
+				}
+			} else {
+				fivePieceCounter = 0;
+			}		
+		}
+	}
+	return false;
+}
+
 // A player has won if a there are 5 pices in a row or 5 captures have been made.
 bool hasWon(int x, int y) {
 	Piece redOrBlue;
@@ -99,145 +182,10 @@ bool hasWon(int x, int y) {
 	return 
 		checkHorizontal(x, y, redOrBlue) ||
 		checkVertical(x, y, redOrBlue) ||
-		checkDiagLeft(x, y, redOrBlue) ||
-		checkDiagRight(x, y, redOrBlue) ||
+		checkDiagBotLeft(x, y, redOrBlue) ||
+		checkDiagTopLeft(x, y, redOrBlue);
 }
 
-bool checkHorizontal(int x, int y, Peice p){
-	int 5PieceCounter = 0;
-	int xStart = x - 4;
-	int yStart = y;
-	int loopLength = 10;
-	if(xStart < 0 || yStart < 0){
-		if(xStart < yStart){
-			loopLength = loopLength + yStart;
-		} else {
-			loopLength = loopLength + xStart;
-		}			
-	}
-	if(xStart < 0) {
-		xStart = 0;
-	}
-	if(yStart < 0) {
-		yStart = 0;
-	}
-	for(int i = 0; i < loopLength; i++) {
-		if(xStart + i > 19) {
-			break;
-		}
-		if(board[xStart + i][yStart] == p){
-			5PieceCounter++;
-			if(5PieceCounter == 5) {
-				return true;
-			}
-		} else {
-			5PieceCounter = 0;
-		}		
-	}
-	return false;
-}
-
-bool checkVertical(int x, int y, Peice p){
-	int 5PieceCounter = 0;
-	int xStart = x;
-	int yStart = y - 4;
-	int loopLength = 10;
-	if(xStart < 0 || yStart < 0){
-		if(xStart < yStart){
-			loopLength = loopLength + yStart;
-		} else {
-			loopLength = loopLength + xStart;
-		}
-	}
-	if(xStart < 0) {
-		xStart = 0;
-	}
-	if(yStart < 0) {
-		yStart = 0;
-	}
-	for(int i = 0; i < loopLength; i++) {
-		if(yStart + i > 19) {
-			break;
-		}
-		if(board[xStart][yStart + i] == p){
-			5PieceCounter++;
-			if(5PieceCounter == 5) {
-				return true;
-			}
-		} else {
-			5PieceCounter = 0;
-		}		
-	}
-	return false;
-}
-
-bool checkDiagLeft(int x, int y, Peice p){
-	int 5PieceCounter = 0;
-	int xStart = x - 4;
-	int yStart = y - 4;
-	int loopLength = 10;
-	if(xStart < 0 || yStart < 0){
-		if(xStart < yStart){
-			loopLength = loopLength + xStart;
-		} else {
-			loopLength = loopLength + yStart;
-		}			
-	}
-	if(xStart < 0) {
-		xStart = 0;
-	}
-	if(yStart < 0) {
-		yStart = 0;
-	}
-	for(int i = 0; i < loopLength; i++) {
-		if(xStart + i > 19 || yStart + i > 19) {
-			break;
-		}
-		if(board[xStart + i][yStart] == p){
-			5PieceCounter++;
-			if(5PieceCounter == 5) {
-				return true;
-			}
-		} else {
-			5PieceCounter = 0;
-		}		
-	}
-	return false;
-}
-
-bool checkDiagRight(int x, int y, Peice p){
-	int 5PieceCounter = 0;
-	int xStart = x - 4;
-	int yStart = y;
-	int loopLength = 10;
-	if(xStart < 0) {
-		xStart = 0;
-	}
-	if(yStart < 0) {
-		yStart = 0;
-	}
-	for(int i = 0; i < loopLength; i++) {
-		if(xStart < 0 || yStart < 0){
-			if(xStart < yStart){
-				loopLength = loopLength + yStart;
-			} else {
-				loopLength = loopLength + xStart;
-			}			
-		}
-		if(xStart + i > 19) {
-			break;
-		}
-		if(board[xStart + i][yStart] == p){
-			5PieceCounter++;
-			if(5PieceCounter == 5) {
-				return true;
-			}
-		} else {
-			5PieceCounter = 0;
-		}		
-	}
-	return false;
-}
 
 int main()
 {
@@ -292,7 +240,7 @@ int main()
 		} else {
 			x = asciiVal - 65;
 		}
-		cout << "player "<< whosTurn <<"enter your number coordinate.";
+		cout << "player "<< whosTurn <<" enter your number coordinate.";
 		while (!(cin >> y) && y > 0 && y < 21)
     	{
     		cin.clear();
@@ -300,8 +248,15 @@ int main()
     		cout << "Invalid input. Please enter a number between 1 and 20." << endl;
     	}
 		
-		makeMove(letterCoordinate, y - 1);
-		if(hasWon(x, y))
+		makeMove(x, y - 1);
+		if(hasWon(x, y)){
+			if(redPlayerTurn){
+				cout << "Blue is trash. Red Won!!";
+			} else {
+				cout << "Red is trash. Blue Won!!";
+			}
+			hasLoser = true;
+		}
 	}
 
     return 0;
