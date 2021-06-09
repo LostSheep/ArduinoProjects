@@ -1,17 +1,12 @@
 /******************************************************************************
-
 The board consists of a 20x20 grid
 It is a 2 player game (R && B)
-
 If a 2 pieces becomes surrounded by 2 opposing pieces on opposite sides
 the piece is considered captured and is removed from the board.
-
 Oposing piece may only be caputured on their turn.
-
 Objective
 Capture 5 pieces
 having 5 active pieces in a row (diagnally, horizontally or vertically)
-
 *******************************************************************************/
 #include <stdio.h>
 #include <iostream>
@@ -22,9 +17,9 @@ using namespace std;
 int boardWidth = 20;
 int boardHeight = 20;
 enum Piece {
-	red, 
-	blue, 
-	blank
+red,
+blue,
+blank
 };
 bool redPlayerTurn = false;
 Piece board[20][20];
@@ -44,220 +39,357 @@ void placePiece(Piece p, int x, int y) {
 }
 
 // this function converts letter number coordinates to x,y.
-void makeMove(int x, int y) {  
-    if(redPlayerTurn) {
-        placePiece(red, x, y);
+bool makeMove(int x, int y) {  
+    if(board[x][y] == blank){
+        if(redPlayerTurn) {
+            placePiece(red, x, y);
+        } else {
+            placePiece(blue, x, y);
+        }
+        return true;
     } else {
-        placePiece(blue, x, y);
+        return false;
     }
 }
 
 void printBoard() {
-	printf("   A B C D E F G H I J K L M N O P Q R S T\n");
+printf("   A B C D E F G H I J K L M N O P Q R S T\n");
     for(int i = 0; i < boardHeight; i++){
-		if(i + 1 > 9){
-			printf("%d ", i + 1);
-		} else {
-			printf(" %d ", i + 1);
-		}
+if(i + 1 > 9){
+printf("%d ", i + 1);
+} else {
+printf(" %d ", i + 1);
+}
         for(int j = 0; j < boardWidth; j++){
-			if(board[j][i] == red) {
-				printf("%c ", 'R');	
-			} else if (board[j][i] == blue){
-				printf("%c ", 'B');
-			} else {
-				printf("%c ", '+');	
-			}
+if(board[j][i] == red) {
+printf("%c ", 'R');
+} else if (board[j][i] == blue){
+printf("%c ", 'B');
+} else {
+printf("%c ", '+');
+}
         }
-		printf("\n");
+printf("\n");
     }
 }
 
 // turnGenerator returns true if player1 is the red player.
 bool turnGenerator(){
-	srand((unsigned int)time(NULL));
-	int random = rand() % 2;
-	return random == 1;
+srand((unsigned int)time(NULL));
+int random = rand() % 2;
+return random == 1;
 }
 
 
 bool checkHorizontal(int x, int y, Piece p){
-	int fivePieceCounter = 0;
-	int xStart = x - 4;
-	int yStart = y;
-	for(int i = 0; i < 10; i++) {
-		if(	xStart + i >= 0 && 
-			xStart + i <= 19 && 
-			yStart - i >= 0 && 
-			yStart - i <= 19) {
-			if(board[xStart + i][yStart] == p){
-				fivePieceCounter++;
-				if(fivePieceCounter == 5) {
-					return true;
-				}
-			} else {
-				fivePieceCounter = 0;
-			}		
-		}
-	}
-	return false;
+int fivePieceCounter = 0;
+int xStart = x - 4;
+int yStart = y;
+for(int i = 0; i < 10; i++) {
+if( xStart + i >= 0 &&
+xStart + i <= 19 &&
+yStart >= 0 &&
+yStart <= 19) {
+if(board[xStart + i][yStart] == p){
+fivePieceCounter++;
+if(fivePieceCounter == 5) {
+return true;
+}
+} else {
+fivePieceCounter = 0;
+}
+}
+}
+return false;
 }
 
 bool checkVertical(int x, int y, Piece p){
-	int fivePieceCounter = 0;
-	int xStart = x;
-	int yStart = y - 4;
+int fivePieceCounter = 0;
+int xStart = x;
+int yStart = y - 4;
 
-	for(int i = 0; i < 10; i++) {
-		if(	xStart + i >= 0 && 
-			xStart + i <= 19 && 
-			yStart - i >= 0 && 
-			yStart - i <= 19) {
-			if(board[xStart][yStart + i] == p){
-				fivePieceCounter++;
-				if(fivePieceCounter == 5) {
-					return true;
-				}
-			} else {
-				fivePieceCounter = 0;
-			}		
-		}
-	}
-	return false;
+for(int i = 0; i < 10; i++) {
+if( xStart >= 0 &&
+xStart <= 19 &&
+yStart - i >= 0 &&
+yStart - i <= 19) {
+if(board[xStart][yStart + i] == p){
+fivePieceCounter++;
+if(fivePieceCounter == 5) {
+return true;
+}
+} else {
+fivePieceCounter = 0;
+}
+}
+}
+return false;
 }
 
 bool checkDiagBotLeft(int x, int y, Piece p){
-	int fivePieceCounter = 0;
-	int xStart = x - 4;
-	int yStart = y - 4;
-	for(int i = 0; i < 10; i++) {
-		if(	xStart + i >= 0 && 
-			xStart + i <= 19 && 
-			yStart - i >= 0 && 
-			yStart - i <= 19) {
-			if(board[xStart + i][yStart + i] == p){
-				fivePieceCounter++;
-				if(fivePieceCounter == 5) {
-					return true;
-				}
-			} else {
-				fivePieceCounter = 0;
-			}		
-		}
-	}
-	return false;
+int fivePieceCounter = 0;
+int xStart = x - 4;
+int yStart = y - 4;
+for(int i = 0; i < 10; i++) {
+if( xStart + i >= 0 &&
+xStart + i <= 19 &&
+yStart + i >= 0 &&
+yStart + i <= 19) {
+if(board[xStart + i][yStart + i] == p){
+fivePieceCounter++;
+if(fivePieceCounter == 5) {
+return true;
+}
+} else {
+fivePieceCounter = 0;
+}
+}
+}
+return false;
 }
 
 bool checkDiagTopLeft(int x, int y, Piece p){
-	int fivePieceCounter = 0;
-	int xStart = x - 4;
-	int yStart = y + 4;
-	
-	for(int i = 0; i < 10; i++) {
-		if(	xStart + i >= 0 && 
-			xStart + i <= 19 && 
-			yStart - i >= 0 && 
-			yStart - i <= 19) {
-			if(board[xStart + i][yStart - i] == p){
-				fivePieceCounter++;
-				if(fivePieceCounter == 5) {
-					return true;
-				}
-			} else {
-				fivePieceCounter = 0;
-			}		
-		}
-	}
-	return false;
+int fivePieceCounter = 0;
+int xStart = x - 4;
+int yStart = y + 4;
+
+for(int i = 0; i < 10; i++) {
+if( xStart + i >= 0 &&
+xStart + i <= 19 &&
+yStart - i >= 0 &&
+yStart - i <= 19) {
+if(board[xStart + i][yStart - i] == p){
+fivePieceCounter++;
+if(fivePieceCounter == 5) {
+return true;
+}
+} else {
+fivePieceCounter = 0;
+}
+}
+}
+return false;
 }
 
 // A player has won if a there are 5 pices in a row or 5 captures have been made.
 bool hasWon(int x, int y) {
-	Piece redOrBlue;
-	if(redPlayerTurn) {
-		redOrBlue = red;
-	} else {
-		redOrBlue = blue;
-	}
-	return 
-		checkHorizontal(x, y, redOrBlue) ||
-		checkVertical(x, y, redOrBlue) ||
-		checkDiagBotLeft(x, y, redOrBlue) ||
-		checkDiagTopLeft(x, y, redOrBlue);
+Piece redOrBlue;
+if(redPlayerTurn) {
+redOrBlue = red;
+if(redScore == 5) {
+   return true;
+}
+} else {
+redOrBlue = blue;
+if(blueScore == 5) {
+   return true;
+}
+}
+return
+checkHorizontal(x, y, redOrBlue) ||
+checkVertical(x, y, redOrBlue) ||
+checkDiagBotLeft(x, y, redOrBlue) ||
+checkDiagTopLeft(x, y, redOrBlue);
+}
+void pieceCapture(int x, int y){
+    Piece redOrblue;
+if(redPlayerTurn) {
+redOrBlue = red;
+} else {
+redOrBlue = blue;
+}
+// top
+if (pieceIsValid(x, y + 3) &&
+   board[x][y + 3] == redOrBlue &&
+   board[x][y + 2] != redOrBlue &&
+   board[x][y + 1] != redOrBlue) {
+       board[x][y + 2] = blank;
+       board[x][y + 1] = blank;
+       if(redOrBlue == red) {
+           blueScore++;
+       } else {
+           redScore++;
+       }
+   }
+    // top right  
+if (pieceIsValid(x + 3, y + 3) &&
+   board[x + 3][y + 3] == redOrBlue &&
+   board[x + 2][y + 2] != redOrBlue &&
+   board[x + 1][y + 1] != redOrBlue) {
+       board[x + 2][y + 2] = blank;
+       board[x + 1][y + 1] = blank;
+       if(redOrBlue == red) {
+           blueScore++;
+       } else {
+           redScore++;
+       }
+   }
+    // right  
+if (pieceIsValid(x + 3, y) &&
+   board[x + 3][y] == redOrBlue &&
+   board[x + 2][y] != redOrBlue &&
+   board[x + 1][y] != redOrBlue) {
+       board[x + 2][y] = blank;
+       board[x + 1][y] = blank;
+       if(redOrBlue == red) {
+           blueScore++;
+       } else {
+           redScore++;
+       }
+   }
+    // bot right  
+if (pieceIsValid(x, y - 3) &&
+   board[x + 3][y - 3] == redOrBlue &&
+   board[x + 2][y - 2] != redOrBlue &&
+   board[x + 1][y - 1] != redOrBlue) {
+       board[x + 2][y - 2] = blank;
+       board[x + 1][y - 1] = blank;
+       if(redOrBlue == red) {
+           blueScore++;
+       } else {
+           redScore++;
+       }
+   }
+    // bot  
+if (pieceIsValid(x, y - 3) &&
+   board[x][y - 3] == redOrBlue &&
+   board[x][y - 2] != redOrBlue &&
+   board[x][y - 1] != redOrBlue) {
+       board[x][y - 2] = blank;
+       board[x][y - 1] = blank;
+       if(redOrBlue == red) {
+           blueScore++;
+       } else {
+           redScore++;
+       }
+   }
+    // bot left  
+if (pieceIsValid(x - 3, y - 3) &&
+   board[x - 3][y - 3] == redOrBlue &&
+   board[x - 2][y - 2] != redOrBlue &&
+   board[x - 1][y - 1] != redOrBlue) {
+       board[x - 2][y - 2] = blank;
+       board[x - 1][y - 1] = blank;
+       if(redOrBlue == red) {
+           blueScore++;
+       } else {
+           redScore++;
+       }
+   }
+    // left  
+if (pieceIsValid(x - 3, y + 3) &&
+   board[x - 3][y] == redOrBlue &&
+   board[x - 2][y] != redOrBlue &&
+   board[x - 1][y] != redOrBlue) {
+       board[x - 2][y] = blank;
+       board[x - 1][y] = blank;
+       if(redOrBlue == red) {
+           blueScore++;
+       } else {
+           redScore++;
+       }
+   }
+    // top left  
+if (pieceIsValid(x - 3, y + 3) &&
+   board[x - 3][y + 3] == redOrBlue &&
+   board[x - 2][y + 2] != redOrBlue &&
+   board[x - 1][y + 1] != redOrBlue) {
+       board[x - 2][y + 2] = blank;
+       board[x - 1][y + 1] = blank;
+       if(redOrBlue == red) {
+           blueScore++;
+       } else {
+           redScore++;
+       }
+   }
 }
 
+bool pieceIsValid(int x, int y){
+return x >= 0 &&
+  x <= 19 &&
+  y >= 0 &&
+  y <= 19;
+}
 
 int main()
 {
-	string name1;
-	string name2;
-	
-	clearBoard();
-    printBoard();
-	bool hasLoser = false;
-	
-	printf("Hows it going diggity dogs.\n");
-	printf("Welcome to the PENTE.\n");
-	printf("Player 1 please enter your name.");
-	cin >> name1;
-	printf("Player 2 please enter your name.");
-	cin >> name2;
+string name1;
+string name2;
 
-    bool player1IsRed = turnGenerator();	
+clearBoard();
+    printBoard();
+bool hasLoser = false;
+
+printf("Hows it going diggity dogs.\n");
+printf("Welcome to the PENTE.\n");
+printf("Player 1 please enter your name.");
+cin >> name1;
+printf("Player 2 please enter your name.");
+cin >> name2;
+
+    bool player1IsRed = turnGenerator();
     string whosTurn;
 
-	if(player1IsRed) {
-		cout << "Hello " << name1 << ", you are red.\n";
-		cout << "Hello " << name2 << ", you are blue.\n";
-	} else {
-		cout << "Hello " << name2 << ", you are red.\n";
-		cout << "Hello " << name1 << ", you are blue.\n";
-	}
+if(player1IsRed) {
+cout << "Hello " << name1 << ", you are red.\n";
+cout << "Hello " << name2 << ", you are blue.\n";
+} else {
+cout << "Hello " << name2 << ", you are red.\n";
+cout << "Hello " << name1 << ", you are blue.\n";
+}
 
     string letterCoordinate;
     int y;
 
-	while(!hasLoser) {
-	    if(redPlayerTurn) {
-	        whosTurn = "red";
-	    } else {
-	        whosTurn = "blue";
-	    }
-	    printBoard();
-	    cout << "player "<< whosTurn <<" enter your letter coordinate.";
-	    while (!(cin >> letterCoordinate) && 
-	    (letterCoordinate[0] >= 6 && letterCoordinate[0] <= 84) ||
-	    (letterCoordinate[0] >= 97 && letterCoordinate[0] <= 116))
-    	{
-    		cin.clear();
-    		cin.ignore(1000, '\n');
-    		cout << "Invalid input. Please enter a valid letter between A and T." << endl;
-    	}
-	    int asciiVal = letterCoordinate[0];
-		int x;
-		if(asciiVal > 96) {
-			x = asciiVal - 97;
-		} else {
-			x = asciiVal - 65;
-		}
-		cout << "player "<< whosTurn <<" enter your number coordinate.";
-		while (!(cin >> y) && y > 0 && y < 21)
-    	{
-    		cin.clear();
-    		cin.ignore(1000, '\n');
-    		cout << "Invalid input. Please enter a number between 1 and 20." << endl;
-    	}
-		
-		makeMove(x, y - 1);
-		if(hasWon(x, y)){
-			if(redPlayerTurn){
-				cout << "Blue is trash. Red Won!!";
-			} else {
-				cout << "Red is trash. Blue Won!!";
-			}
-			hasLoser = true;
-		}
-	}
+while(!hasLoser) {
+   if(redPlayerTurn) {
+       whosTurn = "red";
+   } else {
+       whosTurn = "blue";
+   }
+   printBoard();
+   cout << "player "<< whosTurn <<" enter your letter coordinate.";
+   while (!(cin >> letterCoordinate) &&
+   (letterCoordinate[0] >= 6 && letterCoordinate[0] <= 84) ||
+   (letterCoordinate[0] >= 97 && letterCoordinate[0] <= 116))
+    {
+    cin.clear();
+    cin.ignore(1000, '\n');
+    cout << "Invalid input. Please enter a valid letter between A and T." << endl;
+    }
+   int asciiVal = letterCoordinate[0];
+int x;
+if(asciiVal > 96) {
+x = asciiVal - 97;
+} else {
+x = asciiVal - 65;
+}
+cout << "player "<< whosTurn <<" enter your number coordinate.";
+while (!(cin >> y) && y > 0 && y < 21)
+    {
+    cin.clear();
+    cin.ignore(1000, '\n');
+    cout << "Invalid input. Please enter a number between 1 and 20." << endl;
+    }
+
+if(makeMove(x, y - 1)){
+   pieceCapture(x, y - 1);
+   
+   
+   
+    if(hasWon(x, y - 1)){
+    if(redPlayerTurn){
+    cout << "Blue is trash. Red Won!!";
+    } else {
+    cout << "Red is trash. Blue Won!!";
+    }
+    hasLoser = true;
+    }
+    redPlayerTurn = !redPlayerTurn;
+} else {
+   cout << "Invalid Move Cheater.\n";
+}
+}
 
     return 0;
 }
